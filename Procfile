@@ -1,1 +1,1 @@
-bot: node index.js
+bot: PORT=$PORT node index.js
