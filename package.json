@@ -1,6 +1,6 @@
 {
   "name": "ipfs-sprint-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An IRC bot to help with IPFS sprint notifications",
   "main": "index.js",
   "scripts": {
@@ -33,5 +33,9 @@
     "is-url": "^1.2.2",
     "shell-quote": "^1.6.1",
     "string-length": "^1.0.1"
-  }
+  },
+  "coordinates": [
+    45.51711170000001,
+    -73.57957809999999
+  ]
 }
