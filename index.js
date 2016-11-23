@@ -8,6 +8,7 @@ const channel = '#ipfs'
 const botName = 'sprint-helper'
 const client = new irc.Client('irc.freenode.net', botName, {
     channels: [channel],
+    port: process.env.PORT || 6667
 })
 
 client.addListener('message', function (from, to, message) {
