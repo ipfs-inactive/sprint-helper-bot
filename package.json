@@ -28,6 +28,10 @@
   },
   "homepage": "https://github.com/richardlitt/ipfs-sprint-helper#readme",
   "dependencies": {
+    "irc": "^0.5.1",
+    "is-number": "^3.0.0",
+    "is-url": "^1.2.2",
+    "shell-quote": "^1.6.1",
     "string-length": "^1.0.1"
   }
 }

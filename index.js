@@ -3,6 +3,7 @@ const parse = require('shell-quote').parse;
 const isUrl = require('is-url')
 const isNumber = require('is-number')
 const stringLength = require('string-length')
+
 const channel = '#ipfs'
 const botName = 'sprint-helper'
 const client = new irc.Client('irc.freenode.net', botName, {
