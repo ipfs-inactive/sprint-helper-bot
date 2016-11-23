@@ -1,0 +1,28 @@
+{
+  "name": "ipfs-sprint-helper",
+  "version": "1.0.0",
+  "description": "An IRC bot to help with IPFS sprint notifications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richardlitt/ipfs-sprint-helper.git"
+  },
+  "keywords": [
+    "irc",
+    "bot",
+    "ipfs",
+    "sprint"
+  ],
+  "author": "Richard Littauer <richard.littauer@gmail.com> (http://burntfen.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/richardlitt/ipfs-sprint-helper/issues"
+  },
+  "homepage": "https://github.com/richardlitt/ipfs-sprint-helper#readme",
+  "dependencies": {
+    "string-length": "^1.0.1"
+  }
+}
