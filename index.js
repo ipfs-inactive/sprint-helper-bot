@@ -13,7 +13,6 @@ const client = new irc.Client('irc.freenode.net', botName, {
 
 client.addListener('message', function (from, to, message) {
   message = parse(message)
-  console.log('From, to, message', from, to, message)
 
   if (to === channel && message[0].slice(0, botName.length) === botName) {
     const topic = (message[1] && typeof message[1] === 'string') ? message[1] : null
