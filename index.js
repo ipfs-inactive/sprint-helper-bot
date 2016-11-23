@@ -19,7 +19,7 @@ client.addListener('message', function (from, to, message) {
     const sprintIssue = (message[2] && isNumber(message[2])) ? message[2] : null
     const notes = (message[3] && isUrl(message[3])) ? message[3] : null
     const zoom = (message[4] && isUrl(message[4])) ? message[4] : null
-    const stream = (message[5] && isUrl(message[5])) ? message[5] : null
+    const stream = (message[5] && typeof message[5] === 'string') ? message[5] : null
 
     // TODO This is not an elegant way to test these
     if (topic != null && sprintIssue != null && notes != null && zoom != null && stream != null) {
