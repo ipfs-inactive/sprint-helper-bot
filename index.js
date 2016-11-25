@@ -1,5 +1,5 @@
-const irc = require('irc');
-const parse = require('shell-quote').parse;
+const irc = require('irc')
+const parse = require('shell-quote').parse
 const isUrl = require('is-url')
 const isNumber = require('is-number')
 const stringLength = require('string-length')
@@ -32,7 +32,7 @@ Sprint Issue: https://github.com/ipfs/pm/issues/${sprintIssue}
 Notes: ${notes}
 Join Call: ${zoom}
 Watch Stream: ${stream}
-${Array(stringLength(header)-3).join('=')}`)
+${Array(stringLength(header) - 3).join('=')}`)
     } else {
       // TODO make the correct usage more intelligent
       client.say(channel, `
