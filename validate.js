@@ -14,6 +14,15 @@ function validateInput (message) {
   }
 }
 
+function checkAllArgs (message) {
+  return (message.topic !== null &&
+    message.sprintIssue !== null &&
+    message.notes !== null &&
+    message.zoom !== null &&
+    message.stream !== null)
+}
+
 module.exports = {
-  validateInput: validateInput
+  validateInput: validateInput,
+  checkAllArgs: checkAllArgs
 }

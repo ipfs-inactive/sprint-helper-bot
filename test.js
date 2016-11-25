@@ -1,6 +1,7 @@
 /* global describe, it */
 const assert = require('assert')
 const validateInput = require('./validate').validateInput
+const checkAllArgs = require('./validate').checkAllArgs
 
 const input = [
   'sprint-helper',
@@ -11,7 +12,7 @@ const input = [
   'https://www.youtube.com/watch?v=ZZ5LpwO-An4'
 ]
 
-describe('ipfs-sprint-helper', () => {
+describe('validate.validateInput', () => {
   it('checks that topic exists', () => {
     input[1] = null
     const output = validateInput(input)
@@ -100,5 +101,24 @@ describe('ipfs-sprint-helper', () => {
     input[5] = 'string'
     const output = validateInput(input)
     assert.equal(output.stream, 'string')
+  })
+})
+
+describe('validate.checkAllArgs', () => {
+  it('checks that all args are present', () => {
+    const output = checkAllArgs(validateInput(input))
+    assert(output, 'all args are present')
+  })
+
+  it('checks if an arg is not present', () => {
+    const output = checkAllArgs(validateInput(input))
+    output.notes = null
+    assert(output, 'all args are not present')
+  })
+
+  it('checks if an arg is false', () => {
+    const output = checkAllArgs(validateInput(input))
+    output.notes = false
+    assert(output, 'an arg is false')
   })
 })
