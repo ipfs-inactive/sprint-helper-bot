@@ -38,7 +38,7 @@ ${Array(stringLength(header) - 3).join('=')}`)
     } else {
       // TODO make the correct usage more intelligent
       client.say(channel, `
-Correct usage: ${botName}: <topic name> <github sprint issue number> <notes url> <zoom url> <stream url>
+Correct usage: ${botName}: <topic name> <github url (or issue no.)> <notes url> <zoom url> <stream url (or message)>
 Feedback: https://github.com/RichardLitt/ipfs-sprint-helper`)
     }
   }
