@@ -2,8 +2,8 @@ const irc = require('irc')
 const parse = require('shell-quote').parse
 const stringLength = require('string-length')
 
-const channel = '#sprinthelper'
-const botName = 'sprint-helper1'
+const channel = '#ipfs'
+const botName = 'sprint-helper'
 
 const valid = require('./validate')
 
