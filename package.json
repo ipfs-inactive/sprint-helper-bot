@@ -37,5 +37,8 @@
   "coordinates": [
     45.522199,
     -73.5641471
-  ]
+  ],
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  }
 }
