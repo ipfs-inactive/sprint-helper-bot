@@ -1,5 +1,6 @@
 const isNumber = require('is-number')
 const isUrl = require('is-url')
+const url = require('url')
 
 function validateInput (message) {
   return {

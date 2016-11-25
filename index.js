@@ -1,8 +1,5 @@
 const irc = require('irc')
 const parse = require('shell-quote').parse
-const isUrl = require('is-url')
-const url = require('url')
-const isNumber = require('is-number')
 const stringLength = require('string-length')
 
 const channel = '#sprinthelper'
