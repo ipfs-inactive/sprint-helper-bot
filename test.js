@@ -38,6 +38,7 @@ describe('validate.validateInput', () => {
   })
 
   it('checks the github link is a url', () => {
+    input[2] = 'https://github.com/ipfs/pm/issues/827'
     const output = validateInput(input)
     assert.equal(output.sprintIssue, 'https://github.com/ipfs/pm/issues/827')
   })
