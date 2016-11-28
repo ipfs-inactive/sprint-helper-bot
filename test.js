@@ -2,6 +2,7 @@
 const assert = require('assert')
 const validateInput = require('./validate').validateInput
 const checkAllArgs = require('./validate').checkAllArgs
+const parse = require('shell-quote').parse
 
 const input = [
   'sprint-helper',
@@ -13,6 +14,18 @@ const input = [
 ]
 
 describe('validate.validateInput', () => {
+  it('checks that there are 6 arguments', () => {
+    const output = validateInput(parse(input.slice(0, 4).join(' ')))
+    assert.equal(output.error, 'Not enough arguments!')
+  })
+
+  it('uses parse to correctly parse arguments', () => {
+    input[1] = '"Title name"'
+    input = parse(input.join(' '))
+    const output = validateInput(input)
+    assert.equal(output.topic, '"Title name"')
+  })
+
   it('checks that topic exists', () => {
     input[1] = null
     const output = validateInput(input)
@@ -63,8 +76,9 @@ describe('validate.validateInput', () => {
   })
 
   it('allows a valid notes url', () => {
+    input[3] = 'https://hackmd.io/IwUw7AHAnFDMIFoDGAGArFBAWMWCGCUwATImACZLnQoRp4RJA==='
     const output = validateInput(input)
-    assert.equal(output.notes, 'https://hackmd.io')
+    assert.equal(output.notes, 'https://hackmd.io/IwUw7AHAnFDMIFoDGAGArFBAWMWCGCUwATImACZLnQoRp4RJA===')
   })
 
   it('checks that zoom exists', () => {
@@ -90,12 +104,18 @@ describe('validate.validateInput', () => {
     input[5] = null
     const output = validateInput(input)
     assert.equal(output.stream, null)
-    input[5] = 'https://www.youtube.com/watch?v=ZZ5LpwO-An4'
+    input[5] = 'https://youtube.com/watch?v=SWBkneyTyPU'
   })
 
   it('allows a valid youtube link', () => {
     const output = validateInput(input)
-    assert.equal(output.stream, 'https://www.youtube.com/watch?v=ZZ5LpwO-An4')
+    assert.equal(output.stream, 'https://youtube.com/watch?v=SWBkneyTyPU')
+  })
+
+  it('checks for a possible glob', () => {
+    input[1] = '"Title name"'
+    const output = validateInput(parse(input.join(' ')))
+    assert.equal(output.stream, 'https://youtube.com/watch?v=SWBkneyTyPU')
   })
 
   it('allows a string note', () => {

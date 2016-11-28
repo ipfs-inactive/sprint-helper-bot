@@ -28,10 +28,15 @@ Join Call: ${message.zoom}
 Watch Stream: ${message.stream}
 ${Array(stringLength(header) - 3).join('=')}`)
     } else {
-      // TODO make the correct usage more intelligent
-      client.say(channel, `
-Correct usage: ${botName}: <topic name> <github url (or issue no.)> <notes url> <zoom url> <stream url (or message)>
-Feedback: https://github.com/RichardLitt/ipfs-sprint-helper`)
+      var usageMsg = `Correct usage: ${botName}: <topic name> <sprint issue> <notes> <zoom> <stream url or message>`
+      var feedback = `Feedback: https://github.com/RichardLitt/ipfs-sprint-helper`
+
+      if (message.error) {
+        client.say(channel, [`
+Error: Wrong amount of arguments.`, usageMsg, feedback].join('\n'))
+      } else {
+        client.say(channel, [usageMsg, feedback].join('\n'))
+      }
     }
   }
 })
