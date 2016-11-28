@@ -9,7 +9,7 @@ const valid = require('./validate')
 
 const client = new irc.Client('irc.freenode.net', botName, {
     channels: [channel],
-    port: process.env.PORT || 6667
+    port: 6667
 })
 
 client.addListener('message', function (from, to, message) {
