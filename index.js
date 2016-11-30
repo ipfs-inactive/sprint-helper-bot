@@ -9,11 +9,14 @@ const valid = require('./validate')
 
 const client = new irc.Client('irc.freenode.net', botName, {
     channels: [channel],
-    port: 6667
+    port: 6667,
+    debug: true
 })
 
 client.addListener('message', function (from, to, message) {
   message = parse(message)
+
+  console.log('message', message)
 
   if (to === channel && message[0].slice(0, botName.length) === botName) {
     message = valid.validateInput(message)
