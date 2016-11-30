@@ -5,7 +5,7 @@ const url = require('url')
 function validateMessage (message, botName) {
   var stream = null
 
-  if (message[0].slice(0, botName.length) !== botName) {
+  if (typeof message[0] === 'object' || message[0].slice(0, botName.length) !== botName) {
     return
   }
 
