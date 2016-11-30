@@ -2,8 +2,12 @@ const isNumber = require('is-number')
 const isUrl = require('is-url')
 const url = require('url')
 
-function validateInput (message) {
+function validateMessage (message, botName) {
   var stream = null
+
+  if (message[0].slice(0, botName.length) !== botName) {
+    return
+  }
 
   if (message.length !== 6) {
     return {
@@ -42,6 +46,6 @@ function checkAllArgs (message) {
 }
 
 module.exports = {
-  validateInput: validateInput,
+  validateMessage: validateMessage,
   checkAllArgs: checkAllArgs
 }
