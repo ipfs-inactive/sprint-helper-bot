@@ -9,8 +9,15 @@ function validateMessage (message, botName) {
     return
   }
 
+  if (message[1] === 'next') {
+    return {
+      type: 'next'
+    }
+  }
+
   if (message.length !== 6) {
     return {
+      type: 'error',
       error: 'Not enough arguments!'
     }
   }
@@ -24,6 +31,7 @@ function validateMessage (message, botName) {
   }
 
   return {
+    type: 'template',
     topic: (message[1] && typeof message[1] === 'string') ? message[1] : null,
     sprintIssue: (message[2] && isNumber(message[2])) ? `https://github.com/ipfs/pm/issues/${message[2]}`
       : (message[2] && url.parse(message[2]).hostname === 'github.com') ? message[2]

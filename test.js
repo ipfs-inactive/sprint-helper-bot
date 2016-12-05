@@ -22,6 +22,22 @@ describe('validate.validateMessage', () => {
     input[0] = 'sprint-helper'
   })
 
+  it('checks that next was provided', () => {
+    newInput = ['sprint-helper', 'next']
+    const output = validateMessage(newInput, botName)
+    assert.equal(output.type, 'next')
+  })
+
+  it('provides a type for a template message', () => {
+    const output = validateMessage(input, botName)
+    assert.equal(output.type, 'template')
+  })
+
+  it('provides an error type', () => {
+    const output = validateMessage(['sprint-helper', 'what'], botName)
+    assert.equal(output.type, 'error')
+  })
+
   it('checks that there are 6 arguments', () => {
     const output = validateMessage(parse(input.slice(0, 4).join(' ')), botName)
     assert.equal(output.error, 'Not enough arguments!')
