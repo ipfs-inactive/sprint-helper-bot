@@ -1,21 +1,17 @@
 const irc = require('irc')
 const parse = require('shell-quote').parse
 const stringLength = require('string-length')
-
-const channel = '#ipfs'
-const botName = 'sprint-helper'
-
+const _ = require('lodash')
+const moment = require('moment')
+const PublicGcal = require('public-gcal')
 const valid = require('./validate')
 
-const PublicGcal = require('public-gcal')
+const channel = '#ipfss'
+const botName = 'sprint-helper'
 const API_key = process.env.IPFS_CALENDAR_API
 const calendarID = 'ipfs.io_eal36ugu5e75s207gfjcu0ae84@group.calendar.google.com'
 
-const _ = require('lodash')
-const moment = require('moment')
-
-var gcal = new PublicGcal({API_key: API_key, calendarId: calendarID})
-
+const gcal = new PublicGcal({API_key: API_key, calendarId: calendarID})
 const client = new irc.Client('irc.freenode.net', botName, {
     channels: [channel],
     port: 6667
@@ -41,9 +37,12 @@ client.addListener('message', function (from, to, message) {
         })
 
         // If there is an event in the future, note when that is
-        if (currentEvent.length !== 0) {
-          client.say(channel, [
-`The next event is "${todaysEvents[1].summary}", ${moment(todaysEvents[1].start.dateTime).fromNow()}.`])
+        if (todaysEvents) {
+          if (todaysEvents.length > 1 && currentEvent.length !== 0) {
+            client.say(channel, [`The next event is "${todaysEvents[1].summary}", ${moment(todaysEvents[1].start.dateTime).fromNow()}.`])
+          } else {
+            client.say(channel, ['There are no more events today.'])
+          }
         }
       })
 
