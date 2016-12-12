@@ -6,8 +6,8 @@ const moment = require('moment')
 const PublicGcal = require('public-gcal')
 const valid = require('./validate')
 
-const channel = '#ipfs'
-const botName = 'sprint-helper'
+const channel = process.env.SPRINT_HELPER_CHANNEL || '#ipfs'
+const botName = process.env.SPRINT_HELPER_NAME || 'sprint-helper'
 const API_key = process.env.IPFS_CALENDAR_API
 const calendarID = 'ipfs.io_eal36ugu5e75s207gfjcu0ae84@group.calendar.google.com'
 
