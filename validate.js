@@ -1,7 +1,7 @@
 const isNumber = require('is-number')
 const isUrl = require('is-url')
 const url = require('url')
-const commands = ['next', 'now', 'botsnack', 'tomorrow']
+const commands = ['next', 'now', 'botsnack', 'tomorrow', 'help']
 
 function validateMessage (message, botName) {
   var stream = null
@@ -16,30 +16,37 @@ function validateMessage (message, botName) {
     }
   }
 
-  if (message.length !== 6) {
+  if (message[1] === 'announce') {
+    if (message.length !== 7) {
+      return {
+        type: 'error',
+        error: 'Not enough arguments!'
+      }
+    }
+
+    // shell-quote will escape ? by making it an object with the URL being in pattern
+    // This fixes that possibility
+    if (message[6] && message[6].pattern) {
+      stream = message[6].pattern
+    } else if (message[6] && typeof message[6] === 'string') {
+      stream = message[6]
+    }
+
     return {
-      type: 'error',
-      error: 'Not enough arguments!'
+      type: 'announce',
+      topic: (message[2] && typeof message[2] === 'string') ? message[1] : null,
+      sprintIssue: (message[3] && isNumber(message[3])) ? `https://github.com/ipfs/pm/issues/${message[3]}`
+        : (message[3] && url.parse(message[3]).hostname === 'github.com') ? message[3]
+        : null,
+      notes: (message[4] && isUrl(message[4])) ? message[4] : null,
+      zoom: (message[5] && isUrl(message[5])) ? message[5] : null,
+      stream: stream
     }
   }
 
-  // shell-quote will escape ? by making it an object with the URL being in pattern
-  // This fixes that possibility
-  if (message[5] && message[5].pattern) {
-    stream = message[5].pattern
-  } else if (message[5] && typeof message[5] === 'string') {
-    stream = message[5]
-  }
-
   return {
-    type: 'template',
-    topic: (message[1] && typeof message[1] === 'string') ? message[1] : null,
-    sprintIssue: (message[2] && isNumber(message[2])) ? `https://github.com/ipfs/pm/issues/${message[2]}`
-      : (message[2] && url.parse(message[2]).hostname === 'github.com') ? message[2]
-      : null,
-    notes: (message[3] && isUrl(message[3])) ? message[3] : null,
-    zoom: (message[4] && isUrl(message[4])) ? message[4] : null,
-    stream: stream
+    type: 'error',
+    error: 'Unrecognized command!'
   }
 }
 

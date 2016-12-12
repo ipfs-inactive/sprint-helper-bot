@@ -16,6 +16,7 @@ const client = new irc.Client('irc.freenode.net', botName, {
     channels: [channel],
     port: 6667
 })
+var usageMsg
 
 client.addListener('message', function (from, to, message) {
   message = parse(message)
@@ -28,9 +29,24 @@ client.addListener('message', function (from, to, message) {
 
     message = valid.validateMessage(message, botName)
 
+    if (message && message.error === 'Unrecognized command!') {
+      usageMsg = `Correct usage: ${botName}: announce <args> | next | now | tomorrow | help`
+      return client.say(channel, [`Error: ${message.error}`, usageMsg].join('\n'))
+    }
+
+    if (message && message.error === 'Not enough arguments!') {
+      usageMsg = `Correct usage: ${botName}: announce <topic name> <sprint issue> <notes> <zoom> <stream url or message>`
+      return client.say(channel, [`Error: ${message.error}`, usageMsg].join('\n'))
+    }
+
     if (message && valid.commands.includes(message.type)) {
       if (message.type === 'botsnack') {
         return client.say(channel, [`om nom nom`])
+      }
+
+      if (message.type === 'help') {
+        usageMsg = `Correct usage: ${botName}: announce <args> | next | now | tomorrow | help`
+        return client.say(channel, [usageMsg, `Feedback: https://github.com/RichardLitt/ipfs-sprint-helper`].join('\n'))
       }
 
       gcal.getEvents({timeMin: moment(new Date()).toISOString(), timeMax: moment(new Date()).add(1, 'week').toISOString()}, function (error, result) {
@@ -84,9 +100,10 @@ client.addListener('message', function (from, to, message) {
       })
     }
 
-    if (message && message.type === 'template' && valid.checkAllArgs(message)) {
-      var header = `========================= IPFS Sprint: ${message.topic} =========================`
-      client.say(channel, `
+    if (message && message.type === 'announce') {
+      if (valid.checkAllArgs(message)) {
+        var header = `========================= IPFS Sprint: ${message.topic} =========================`
+        return client.say(channel, `
 ${header}
 Topic: ${message.topic}
 Sprint Issue: ${message.sprintIssue}
@@ -94,15 +111,10 @@ Notes: ${message.notes}
 Join Call: ${message.zoom}
 Watch Stream: ${message.stream}
 ${Array(stringLength(header) - 3).join('=')}`)
-    } else if (message && message.type === 'error') {
-      var usageMsg = `Correct usage: ${botName}: <topic name> <sprint issue> <notes> <zoom> <stream url or message>`
-      var feedback = `Feedback: https://github.com/RichardLitt/ipfs-sprint-helper`
-
-      if (message.error) {
-        client.say(channel, [`
-Error: Wrong amount of arguments.`, usageMsg, feedback].join('\n'))
       } else {
-        client.say(channel, [usageMsg, feedback].join('\n'))
+        usageMsg = `Correct usage: ${botName}: announce <topic name> <sprint issue> <notes> <zoom> <stream url or message>`
+        return client.say(channel, `Error: Not all args are valid.
+${usageMsg}`)
       }
     }
   }
