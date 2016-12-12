@@ -6,7 +6,7 @@ const moment = require('moment')
 const PublicGcal = require('public-gcal')
 const valid = require('./validate')
 
-const channel = '#ipfss'
+const channel = '#ipfs'
 const botName = 'sprint-helper'
 const API_key = process.env.IPFS_CALENDAR_API
 const calendarID = 'ipfs.io_eal36ugu5e75s207gfjcu0ae84@group.calendar.google.com'
@@ -24,28 +24,31 @@ client.addListener('message', function (from, to, message) {
     message = valid.validateMessage(message, botName)
 
     if (message && message.type === 'next') {
-      gcal.getEvents({timeMin: moment(new Date()).toISOString(), timeMax: moment(new Date()).add(1, "week").toISOString()}, function (error, result) {
+      gcal.getEvents({timeMin: moment(new Date()).toISOString(), timeMax: moment(new Date()).add(1, 'week').toISOString()}, function (error, result) {
         if (error) { return console.log(error) }
 
-        var todaysEvents = _.filter(result, function(event) {
-          return moment(event.start.dateTime).isSame(new Date(), "day")
+        var todaysEvents = _.filter(result, function (event) {
+          return moment(event.start.dateTime).isSame(new Date(), 'day') && moment(event.end.dateTime).isAfter(new Date())
         })
 
         // TODO If event is going on right now, note that if asked
-        var currentEvent = _.filter(todaysEvents, function(event) {
-          return moment(event.start.dateTime).isBefore(moment(new Date()))
+        var currentEvent = _.filter(todaysEvents, function (event) {
+          return moment(event.start.dateTime).isBefore(moment(new Date())) && moment(event.end.dateTime).isAfter(new Date())
         })
+
+        console.log(' Todays events', currentEvent)
 
         // If there is an event in the future, note when that is
         if (todaysEvents) {
-          if (todaysEvents.length > 1 && currentEvent.length !== 0) {
-            client.say(channel, [`The next event is "${todaysEvents[1].summary}", ${moment(todaysEvents[1].start.dateTime).fromNow()}.`])
+          if (todaysEvents.length > 1 || todaysEvents.length === 1 && currentEvent.length === 0) {
+            client.say(channel, [`The next event is "${todaysEvents[0].summary}", ${moment(todaysEvents[0].start.dateTime).fromNow()}.`])
+          } else if (currentEvent.length === 1) {
+            client.say(channel, [`The current event is "${currentEvent[0].summary}".`])
           } else {
             client.say(channel, ['There are no more events today.'])
           }
         }
       })
-
     }
 
     if (message && message.type === 'template' && valid.checkAllArgs(message)) {
