@@ -9,9 +9,9 @@ function validateMessage (message, botName) {
     return
   }
 
-  if (message[1] === 'next') {
+  if (['next', 'now'].includes(message[1])) {
     return {
-      type: 'next'
+      type: message[1]
     }
   }
 

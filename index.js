@@ -23,7 +23,7 @@ client.addListener('message', function (from, to, message) {
   if (to === channel) {
     message = valid.validateMessage(message, botName)
 
-    if (message && message.type === 'next') {
+    if (message && ['next', 'now'].includes(message.type)) {
       gcal.getEvents({timeMin: moment(new Date()).toISOString(), timeMax: moment(new Date()).add(1, 'week').toISOString()}, function (error, result) {
         if (error) { return console.log(error) }
 
@@ -36,14 +36,23 @@ client.addListener('message', function (from, to, message) {
           return moment(event.start.dateTime).isBefore(moment(new Date())) && moment(event.end.dateTime).isAfter(new Date())
         })
 
-        console.log(' Todays events', currentEvent)
+        if (message.type === 'now') {
+          if (currentEvent.length === 0) {
+            client.say(channel, [`Nothing is currently happening.`])
+          } else {
+            client.say(channel, [`The current event is "${currentEvent[0].summary}", which started ${moment(currentEvent[0].start.dateTime).fromNow()} and ends ${moment(currentEvent[0].end.dateTime).fromNow()}.`])
+          }
+        }
 
         // If there is an event in the future, note when that is
-        if (todaysEvents) {
+        if (message.type === 'next' && todaysEvents) {
           if (todaysEvents.length > 1 || todaysEvents.length === 1 && currentEvent.length === 0) {
-            client.say(channel, [`The next event is "${todaysEvents[0].summary}", ${moment(todaysEvents[0].start.dateTime).fromNow()}.`])
-          } else if (currentEvent.length === 1) {
-            client.say(channel, [`The current event is "${currentEvent[0].summary}".`])
+            if (currentEvent.length === 1) {
+              client.say(channel, [`The next event is "${todaysEvents[1].summary}", ${moment(todaysEvents[1].start.dateTime).fromNow()}.`])
+              client.say(channel, [`Right now, "${currentEvent[0].summary}" is happening.`])
+            } else if (currentEvent.length === 0) {
+              client.say(channel, [`The next event is "${todaysEvents[0].summary}", ${moment(todaysEvents[0].start.dateTime).fromNow()}.`])
+            }
           } else {
             client.say(channel, ['There are no more events today.'])
           }
