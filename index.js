@@ -21,6 +21,11 @@ client.addListener('message', function (from, to, message) {
   message = parse(message)
 
   if (to === channel) {
+    // This is silly.
+    if (message[0] === '!botsnack') {
+      return client.say(channel, [`om nom nom`])
+    }
+
     message = valid.validateMessage(message, botName)
 
     if (message && ['next', 'now'].includes(message.type)) {
