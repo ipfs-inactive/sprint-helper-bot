@@ -1,7 +1,7 @@
 const isNumber = require('is-number')
 const isUrl = require('is-url')
 const url = require('url')
-const commands = ['next', 'now', 'botsnack']
+const commands = ['next', 'now', 'botsnack', 'tomorrow']
 
 function validateMessage (message, botName) {
   var stream = null

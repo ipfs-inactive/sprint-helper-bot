@@ -45,6 +45,21 @@ client.addListener('message', function (from, to, message) {
           return moment(event.start.dateTime).isBefore(moment(new Date())) && moment(event.end.dateTime).isAfter(new Date())
         })
 
+        if (message.type === 'tomorrow') {
+          var tomorrow = _.filter(result, function (event) {
+            return moment(event.start.dateTime).add(1, 'days').isSame(new Date(), 'day')
+          })
+
+          if (tomorrow.length === 0) {
+            return client.say(channel, [`There are no planned events tomorrow.`])
+          } else if (tomorrow.length === 1) {
+            return client.say(channel, [`There is ${tomorrow.length} event tomorrow: "${tomorrow[0].summary}" at ${moment(tomorrow[0].start.dateTime, 'HH:mm')}.`])
+          } else if (tomorrow.length > 1) {
+            return client.say(channel, [`There are ${tomorrow.length} events tomorrow.
+            The first is "${tomorrow[0].summary}" at ${moment(tomorrow[0].start.dateTime, 'HH:mm')}.`])
+          }
+        }
+
         if (message.type === 'now') {
           if (currentEvent.length === 0) {
             client.say(channel, [`Nothing is currently happening.`])
