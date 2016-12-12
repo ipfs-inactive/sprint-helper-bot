@@ -1,6 +1,7 @@
 const isNumber = require('is-number')
 const isUrl = require('is-url')
 const url = require('url')
+const commands = ['next', 'now', 'botsnack']
 
 function validateMessage (message, botName) {
   var stream = null
@@ -9,7 +10,7 @@ function validateMessage (message, botName) {
     return
   }
 
-  if (['next', 'now'].includes(message[1])) {
+  if (commands.includes(message[1])) {
     return {
       type: message[1]
     }
@@ -55,5 +56,6 @@ function checkAllArgs (message) {
 
 module.exports = {
   validateMessage: validateMessage,
-  checkAllArgs: checkAllArgs
+  checkAllArgs: checkAllArgs,
+  commands: commands
 }

@@ -28,7 +28,11 @@ client.addListener('message', function (from, to, message) {
 
     message = valid.validateMessage(message, botName)
 
-    if (message && ['next', 'now'].includes(message.type)) {
+    if (message && valid.commands.includes(message.type)) {
+      if (message.type === 'botsnack') {
+        return client.say(channel, [`om nom nom`])
+      }
+
       gcal.getEvents({timeMin: moment(new Date()).toISOString(), timeMax: moment(new Date()).add(1, 'week').toISOString()}, function (error, result) {
         if (error) { return console.log(error) }
 
