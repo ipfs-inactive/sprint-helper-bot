@@ -1,6 +1,6 @@
 {
   "name": "ipfs-sprint-helper",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "An IRC bot to help with IPFS sprint notifications",
   "main": "index.js",
   "scripts": {
@@ -38,8 +38,8 @@
     "string-length": "^1.0.1"
   },
   "coordinates": [
-    45.5213429,
-    -73.5746935
+    45.5192123,
+    -73.5789413
   ],
   "devDependencies": {
     "mocha": "^3.2.0"
