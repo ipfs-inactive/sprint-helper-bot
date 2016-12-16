@@ -34,7 +34,7 @@ function validateMessage (message, botName) {
 
     return {
       type: 'announce',
-      topic: (message[2] && typeof message[2] === 'string') ? message[1] : null,
+      topic: (message[2] && typeof message[2] === 'string') ? message[2] : null,
       sprintIssue: (message[3] && isNumber(message[3])) ? `https://github.com/ipfs/pm/issues/${message[3]}`
         : (message[3] && url.parse(message[3]).hostname === 'github.com') ? message[3]
         : null,
