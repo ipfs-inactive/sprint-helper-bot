@@ -79,7 +79,7 @@ module.exports = function (message, botName, cb) {
       }
 
       if (message.type === 'notify') {
-        if (moment(todaysEvents[0].start.dateTime).diff(moment(), 'minutes') == message.time) {
+        if (todaysEvents[0] && todaysEvents[0].start && moment(todaysEvents[0].start.dateTime).diff(moment(), 'minutes') + 1 == message.time) {
           return cb(null, `The next event "${todaysEvents[0].summary}" is ${moment(todaysEvents[0].start.dateTime).fromNow()}.`)
         }
       }
