@@ -6,7 +6,7 @@ const moment = require('moment')
 
 const PublicGcal = require('public-gcal')
 const gcal = new PublicGcal({
-  API_key: process.env.IPFS_CALENDAR_API
+  API_key: process.env.IPFS_CALENDAR_API,
   calendarId: 'ipfs.io_eal36ugu5e75s207gfjcu0ae84@group.calendar.google.com'
 })
 
