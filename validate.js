@@ -1,17 +1,11 @@
 const isNumber = require('is-number')
 const isUrl = require('is-url')
 const url = require('url')
-const commands = ['next', 'now', 'botsnack', 'tomorrow', 'help']
+const commands = ['announce', 'next', 'now', 'botsnack', 'tomorrow', 'help', 'notify']
 
 function validateMessage (message, botName) {
   if (typeof message[0] === 'object' || message[0].slice(0, botName.length) !== botName) {
     return
-  }
-
-  if (commands.includes(message[1])) {
-    return {
-      type: message[1]
-    }
   }
 
   if (message[1] === 'announce') {
@@ -39,6 +33,21 @@ function validateMessage (message, botName) {
       notes: (message[4] && isUrl(message[4])) ? message[4] : null,
       zoom: (message[5] && isUrl(message[5])) ? message[5] : null,
       stream: message[6]
+    }
+  }
+
+  if (message[1] === 'notify') {
+    if (typeof parseInt(message[2]) === 'number') {
+      return {
+        type: message[1],
+        time: message[2]
+      }
+    }
+  }
+
+  if (commands.includes(message[1])) {
+    return {
+      type: message[1]
     }
   }
 

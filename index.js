@@ -3,10 +3,12 @@ const stringLength = require('string-length')
 const valid = require('./validate')
 const _ = require('lodash')
 const moment = require('moment')
+
 const PublicGcal = require('public-gcal')
-const API_key = process.env.IPFS_CALENDAR_API
-const calendarID = 'ipfs.io_eal36ugu5e75s207gfjcu0ae84@group.calendar.google.com'
-const gcal = new PublicGcal({API_key: API_key, calendarId: calendarID})
+const gcal = new PublicGcal({
+  API_key: process.env.IPFS_CALENDAR_API
+  calendarId: 'ipfs.io_eal36ugu5e75s207gfjcu0ae84@group.calendar.google.com'
+})
 
 var usageMsg
 
@@ -44,7 +46,10 @@ module.exports = function (message, botName, cb) {
       return cb(null, [usageMsg, `Feedback: https://github.com/RichardLitt/ipfs-sprint-helper`].join('\n'))
     }
 
-    gcal.getEvents({timeMin: moment(new Date()).toISOString(), timeMax: moment(new Date()).add(1, 'week').toISOString()}, function (error, result) {
+    gcal.getEvents({
+      timeMin: moment(new Date()).toISOString(),
+      timeMax: moment(new Date()).add(1, 'week').toISOString()
+    }, function (error, result) {
       if (error) {
         return cb(error)
       }
@@ -70,6 +75,12 @@ module.exports = function (message, botName, cb) {
         } else if (tomorrow.length > 1) {
           return cb(null,  `There are ${tomorrow.length} events tomorrow.
           The first is "${tomorrow[0].summary}" at ${moment(tomorrow[0].start.dateTime, 'HH:mm')}.`)
+        }
+      }
+
+      if (message.type === 'notify') {
+        if (moment(todaysEvents[0].start.dateTime).diff(moment(), 'minutes') == message.time) {
+          return cb(null, `The next event "${todaysEvents[0].summary}" is ${moment(todaysEvents[0].start.dateTime).fromNow()}.`)
         }
       }
 

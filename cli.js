@@ -21,7 +21,7 @@ const cli = meow([`
 
 const botName = cli.flags.b || process.env.SPRINT_HELPER_NAME || 'sprint-helper'
 
-sprintHelper(`${botName} ${cli.input[0]}`, botName, (err, data) => {
+sprintHelper(`${botName} ${cli.input.join(' ')}`, botName, (err, data) => {
   if (err) {
     throw new Error(err)
   }
