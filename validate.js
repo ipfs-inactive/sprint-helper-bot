@@ -4,8 +4,6 @@ const url = require('url')
 const commands = ['next', 'now', 'botsnack', 'tomorrow', 'help']
 
 function validateMessage (message, botName) {
-  var stream = null
-
   if (typeof message[0] === 'object' || message[0].slice(0, botName.length) !== botName) {
     return
   }
@@ -26,10 +24,10 @@ function validateMessage (message, botName) {
 
     // shell-quote will escape ? by making it an object with the URL being in pattern
     // This fixes that possibility
-    if (message[6] && message[6].pattern) {
-      stream = message[6].pattern
-    } else if (message[6] && typeof message[6] === 'string') {
-      stream = message[6]
+    for (var i = 0; i < message.length; i++) {
+      if (message[i] && message[i].pattern) {
+        message[i] = message[i].pattern
+      }
     }
 
     return {
@@ -40,7 +38,7 @@ function validateMessage (message, botName) {
         : null,
       notes: (message[4] && isUrl(message[4])) ? message[4] : null,
       zoom: (message[5] && isUrl(message[5])) ? message[5] : null,
-      stream: stream
+      stream: message[6]
     }
   }
 
