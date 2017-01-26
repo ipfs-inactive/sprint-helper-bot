@@ -1,6 +1,6 @@
 const irc = require('irc')
-const botName = process.env.SPRINT_HELPER_NAME || 'sprint-helpers'
-const channel = process.env.SPRINT_HELPER_CHANNEL || '#ipfsss'
+const botName = process.env.SPRINT_HELPER_NAME || 'sprint-helper'
+const channel = process.env.SPRINT_HELPER_CHANNEL || '#ipfs'
 const client = new irc.Client('irc.freenode.net', botName, {
     channels: [channel],
     port: 6667
