@@ -9,6 +9,7 @@ const configVars = [
   'REPOSITORY',
   'CRON_SCHEDULE',
   'CRYPTPAD_TEMPLATE',
+  'FACILITATORS_FILE',
   'ISSUE_TITLE',
   'ISSUE_TEMPLATE',
   'GITHUB_AUTH_TOKEN'
@@ -29,12 +30,15 @@ configVars.forEach((key) => {
 const isProd = process.env.NODE_ENV === 'production'
 
 const createAllHandsIssue = () => {
-  let title = `${config.ISSUE_TITLE} ${moment(moment().day(11)).format('MMM DD')}`
+  const date = moment().add(6, 'days').format('MMM DD')
+  let title = `${config.ISSUE_TITLE} ${date}`
   if (!isProd) {
     title = `[TEST] ${title}`
   }
   createIssue({
     title,
+    date,
+    facilitators_file: config.FACILITATORS_FILE,
     issue_template: config.ISSUE_TEMPLATE,
     cryptpad_template: config.CRYPTPAD_TEMPLATE,
     repo: config.REPOSITORY,

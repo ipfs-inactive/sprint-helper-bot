@@ -1,45 +1,41 @@
 const Octo = require('octokat')
 const debug = require('debug')('sprint-helper:create-issue')
 const gh = new Octo({
-  token: process.env.SPRINT_HELPER_GITHUB_AUTH_TOKEN
+  token: process.env.SPRINT_HELPER_GITHUB_AUTH_TOKEN,
+  cacheHandler: {get: () => {}, add: () => {}}
 })
-const atob = require('atob')
 const generateCryptpad = require('./generate-cryptpad')
 
 // githubPath should be the format of:
 // $org/$repo,$path
 // Example: ipfs/pm,templates/all-hands-issue-template.md
-const readFile = (githubPath) => {
+const readFile = (githubPath, isJSON = false) => {
   debug('Reading path', githubPath, 'from Github')
   const s = githubPath.split(',')
   const repo = s[0]
   const fileToLoad = s[1]
   debug({repo, fileToLoad})
-  return gh.repos(repo).contents(fileToLoad).read()
+  const ghContents = gh.repos(repo).contents(fileToLoad)
+  if (isJSON) {
+    debug('Fetching as JSON')
+    return ghContents.read().then((res) => {
+      return JSON.parse(res)
+    })
+  } else {
+    debug('Fetching as plaintext')
+    return ghContents.read()
+  }
 }
 
-// Takes a issue template, creates a cryptpad with some other template and links it
-const cryptpad = (issueTemplate, padTemplate) => new Promise((resolve, reject) => {
-  debug('Creating cryptpad from template at ', padTemplate)
-  return readFile(padTemplate).then((cryptpadTemplate) => {
-    return generateCryptpad(cryptpadTemplate.toString())
-  }).then((url) => {
-    debug('Created cryptpad', url)
-    resolve(issueTemplate.replace('CRYPTPAD', url))
-  })
-})
-
 // This gets the list from the README of the repo, from the section `Facilitators and Notetakers`
-function getNewRoles (repo, lastLead) {
-  debug('Getting new roles for repo', repo)
+function getNewRoles (faciliatorsDataFilePath, lastLead) {
+  debug('Getting new roles from file', faciliatorsDataFilePath)
   debug('lastLead', lastLead)
-  return gh.repos(repo).readme.fetch()
+  // TODO replace with faciliatorsDataFilePath
+  return readFile(faciliatorsDataFilePath, true)
     .then((res) => {
-      var readme = atob(res.content)
-      // Dumbly read from the Header to the end of the document, looking for names per line
-      // Could be optimized to only look in that section
-      var facilitators = readme.substring(readme.lastIndexOf('Facilitators and Notetakers')).match(/\n- @.*/g)
-      facilitators = facilitators.map((item) => '@' + item.split('@')[1].toLowerCase())
+      debug('received facilitators', res)
+      const facilitators = res.map((item) => '@' + item.toLowerCase())
       var numFacilitators = facilitators.length
       if (facilitators.indexOf(lastLead) !== -1) {
         const res = {
@@ -72,26 +68,39 @@ function getLastLead (repo) {
     // TODO replace with env var
     var lastLead = issue.substring(issue.lastIndexOf('All Hands Call')).match(/@[a-zA-Z0-9]*/g)[0]
     return lastLead.toLowerCase()
-  }).then((lastLead) => {
-    return getNewRoles(repo, lastLead)
   })
 }
 
-module.exports = function createIssue (issue) {
-  debug('Create new issue', issue)
-  readFile(issue.issue_template, 'utf8').then((issueTemplate) => {
-    return cryptpad(issueTemplate, issue.cryptpad_template)
-  }).then((data) => {
-    return getLastLead(issue.repo).then((roles) => {
-      debug('got new roles', roles)
-      data = data.replace(/LEAD/, roles.lead)
-      data = data.replace(/NOTER/, roles.notetaker)
-      debug('creating issue in ', issue.repo)
-      debug('title', issue.title)
-      debug('body', data)
-      debug('labels', issue.labels)
-      return gh.repos(issue.repo).issues
-        .create({title: issue.title, body: data, labels: issue.labels})
-    })
-  }).then((res) => res)
+const replaceInString = (str, map) => {
+  let out = '' + str
+  Object.keys(map).forEach((key) => {
+    out = out.replace('$' + key, map[key])
+  })
+  return out
+}
+
+module.exports = async function createIssue (issue) {
+  debug('Creating new issue and pad', issue)
+  const issueContents = await readFile(issue.issue_template)
+  const padContents = await readFile(issue.cryptpad_template)
+
+  const lastLead = await getLastLead(issue.repo)
+  const newLeads = await getNewRoles(issue.facilitators_file, lastLead)
+
+  const cryptpadUrl = await generateCryptpad(replaceInString(padContents, {
+    DATE: issue.date,
+    MODERATOR: newLeads.lead,
+    NOTETAKER: newLeads.notetaker
+  }))
+
+  const issueBody = replaceInString(issueContents, {
+    MODERATOR: newLeads.lead,
+    NOTETAKER: newLeads.notetaker,
+    CRYPTPAD: cryptpadUrl
+  })
+
+  const issueToCreate = {title: issue.title, body: issueBody, labels: issue.labels}
+  debug('issueToCreate', issueToCreate)
+
+  return gh.repos(issue.repo).issues.create(issueToCreate)
 }
