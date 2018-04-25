@@ -57,18 +57,52 @@ have multiple meetings that needs to be scheduled each week.
 Examples values:
 
 - `SPRINT_HELPER_REPOSITORY` = `ipfs/pm`
-- `SPRINT_HELPER_CRON_SCHEDULE` = `00 18 * * 1` (At 18:00 on Mondays, see https://crontab.guru)
+- `SPRINT_HELPER_CRON_SCHEDULE` = `00 01 * * 2` (At 01:00 on Tuesdays, see https://crontab.guru)
 - `SPRINT_HELPER_CRYPTPAD_TEMPLATE` = `ipfs/pm,templates/all-hands-pad-template.md`
+- `SPRINT_HELPER_FACILITATORS_FILE` `ipfs/pm,templates/all-hands-facilitators.json`
 - `SPRINT_HELPER_ISSUE_TITLE` = `All Hands` (The date of the meeting gets appended to the title)
 - `SPRINT_HELPER_ISSUE_TEMPLATE` = `ipfs/pm,templates/all-hands-issue-template.md`
 - `SPRINT_HELPER_GITHUB_AUTH_TOKEN` = Get it from https://github.com/settings/tokens/new
 
 ## Deploy
 
-*TOWRITE*
+In this case, we're deploying sprint-helper for the IPFS all-hands that is every monday.
 
-Basically, setup a git remote pointing to dokku, set the config values from inside
-the instance and then push it!
+We'll be using the example values from above, exactly as written (except the Github Token).
+
+First, inside sprint-helper, create a new git remote pointing to our dokku instance.
+
+```
+git remote add ipfs-all-hands dokku@cloud.ipfs.team:ipfs-all-hands
+git push ipfs-all-hands master
+```
+
+Now dokku will try to deploy sprint-helper, but it won't succeed as many config
+variables have yet to be set. For this, we need to access the instance and set
+the values from there.
+
+```
+ssh root@cloud.ipfs.team
+# Once inside:
+dokku config:set --no-restart ipfs-all-hands SPRINT_HELPER_REPOSITORY="ipfs/pm"
+dokku config:set --no-restart ipfs-all-hands SPRINT_HELPER_CRON_SCHEDULE="00 01 * * 2"
+dokku config:set --no-restart ipfs-all-hands SPRINT_HELPER_CRYPTPAD_TEMPLATE="ipfs/pm,templates/all-hands-pad-template.md"
+dokku config:set --no-restart ipfs-all-hands SPRINT_HELPER_FACILITATORS_FILE="ipfs/pm,templates/all-hands-facilitators.json"
+dokku config:set --no-restart ipfs-all-hands SPRINT_HELPER_ISSUE_TITLE="All Hands"
+dokku config:set --no-restart ipfs-all-hands SPRINT_HELPER_ISSUE_TEMPLATE="ipfs/pm,templates/all-hands-issue-template.md"
+dokku config:set --no-restart ipfs-all-hands SPRINT_HELPER_GITHUB_AUTH_TOKEN=Secretsssss
+dokku config:set --no-restart ipfs-all-hands DEBUG="sprint-helper:*"
+dokku config:set --no-restart ipfs-all-hands NODE_ENV="production"
+```
+
+With the config values now set, we can attempt the deploy again, this time it will (hopefully)
+work. Run this locally in the sprint-helper clone directory.
+
+```
+git push ipfs-all-hands master
+```
+
+And now sprint-helper will automatically create your issues and pads for you!
 
 # License
 
