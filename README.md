@@ -10,6 +10,7 @@ Future tasks:
 
 - Announce before meetings start on IRC
 - Setup live-streaming via Youtube automatically (Youtube + Zoom integration)
+- Automatically copy notes back to Github when meeting is over
 
 ## Running
 
